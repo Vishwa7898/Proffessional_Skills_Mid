@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT2090 - Professional Skills Midterm Quiz</title>
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans Sinhala', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        background-color: #f0f2f5;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+    }
+    #quiz-container {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 850px;
+        overflow: hidden;
+    }
+    #header {
+        background: linear-gradient(135deg, #4A90E2, #50E3C2);
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+    h2 {
+        margin: 0;
+        font-size: 1.5em;
+    }
+    #timer {
+        font-size: 1.8em;
+        font-weight: bold;
+        color: #fff;
+        background-color: rgba(0,0,0,0.2);
+        padding: 5px 15px;
+        border-radius: 5px;
+        margin-top: 15px;
+        display: inline-block;
+        letter-spacing: 2px;
+    }
+    #question-area {
+        padding: 25px;
+    }
+    #question-text {
+        font-size: 1.2em;
+        font-weight: 500;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+    #options-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .option {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: background-color 0.2s, border-color 0.2s;
+    }
+    .option.no-hover {
+        cursor: default;
+    }
+    .option:not(.no-hover):hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+    }
+    .option.correct {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+        font-weight: bold;
+    }
+    .option.incorrect {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+    #feedback {
+        padding: 20px 25px 5px 25px;
+        display: none; /* Initially hidden */
+    }
+    #feedback.show {
+        display: block;
+    }
+    #explanation-text {
+        font-style: italic;
+        margin-top: 10px;
+        color: #555;
+        line-height: 1.6;
+    }
+    #navigation-palette {
+        padding: 20px 25px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+        gap: 8px;
+        border-top: 1px solid #e9ecef;
+        max-height: 160px;
+        overflow-y: auto;
+    }
+    .nav-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        background-color: #f8f9fa; /* Unanswered */
+        color: #333;
+    }
+    .nav-item.current {
+        background-color: #007bff; /* Current */
+        color: white;
+        border-color: #0056b3;
+    }
+    .nav-item.answered-correct {
+        background-color: #28a745; /* Correct */
+        color: white;
+        border-color: #1e7e34;
+    }
+    .nav-item.answered-incorrect {
+        background-color: #dc3545; /* Incorrect */
+        color: white;
+        border-color: #bd2130;
+    }
+    #footer {
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+    }
+    #progress-text {
+        font-size: 0.9em;
+        color: #6c757d;
+        font-weight: bold;
+    }
+    .nav-btn {
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.2s;
+    }
+    #next-btn {
+        background-color: #28a745;
+    }
+    #back-btn {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    .nav-btn:disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+    }
+</style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <div id="header">
+        <h2>IT2090 Professional Skills - Midterm Quiz</h2>
+        <div id="timer">00:00</div>
+    </div>
+    <div id="question-area">
+        <p id="question-text"></p>
+        <ul id="options-list"></ul>
+    </div>
+    <div id="feedback">
+        <p id="explanation-text"></p>
+    </div>
+    <div id="navigation-palette"></div>
+    <div id="footer">
+        <button id="back-btn" class="nav-btn">Back</button>
+        <span id="progress-text"></span>
+        <button id="next-btn" class="nav-btn">Next</button>
+    </div>
+</div>
+
+<script>
+const quizData = [
+    /* ---------------------------------- Paper 1: (40 Questions) - Source: Sample Questions Answers for Mid term 2025 MCQ IT2090 Professional Skills.pdf ---------------------------------- */
+    {
+        question: "1. Which of the following is not one of the five core aspects of self-awareness discussed in Lecture 1?",
+        options: ["Emotional Intelligence", "Financial Acumen", "Values", "Cognitive Style"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: ස්වයං-අවබෝධයේ (self-awareness) මූලික අංග පහ නම්: Core Self-evaluation, Values, Cognitive Style, Attitudes towards Change, සහ Emotional Intelligence වේ. 'Financial Acumen' ඉන් එකක් නොවේ."
+    },
+    {
+        question: "2. According to the lecture, what is self-awareness primarily concerned with?",
+        options: ["Understanding others through social interaction", "Memorizing psychological theories", "Seeing oneself clearly and objectively through reflection", "Managing stress in team environments"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: ස්වයං-අවබෝධය (Self-awareness) යනු පරාවර්තනය (reflection) සහ ආත්ම-විමර්ශනය (introspection) මගින් කෙනෙකුව පැහැදිලිව සහ වෛෂයිකව දැකීමේ හැකියාවයි."
+    },
+    {
+        question: "3. Why is it essential to understand the stages of personal development when creating a PDP?",
+        options: ["To ensure you avoid professional development courses", "To select a mentor in your chosen career path", "To evaluate others' progress and offer feedback", "To systematically identify personal goals and learning gaps"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: PDP නිර්මාණය කිරීමේදී, පෞද්ගලික සංවර්ධන අවධි (stages) තේරුම් ගැනීම වැදගත් වන්නේ පුද්ගලික ඉලක්ක සහ ඉගෙනුම් පරතරයන් (learning gaps) ක්‍රමානුකූලව හඳුනා ගැනීමටයි."
+    },
+    {
+        question: "4. Which of the following best explains the difference between physical sciences and social sciences in the context of self-awareness?",
+        options: ["Physical sciences are subjective, while social sciences are mathematical", "Social sciences rely on lab experiments, while physical sciences do not", "Physical sciences study inanimate objects; social sciences study human behavior", "Social sciences deal only with economic theories"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: භෞතික විද්‍යාව (Physical sciences) අජීවී වස්තූන් (inanimate objects) අධ්‍යයනය කරන අතර, සමාජ විද්‍යාව (Social Science) මිනිසුන් අතර අන්තර් සම්බන්ධතා සහ මිනිස් හැසිරීම් (human behavior) විමර්ශනය කරයි."
+    },
+    {
+        question: "5. A student consistently sets goals but fails to follow through. What is the most likely gap in their PDP process?",
+        options: ["Excessive use of digital tools", "Lack of knowledge about career options", "Absence of methods to assess progress and reflect", "Unwillingness to attend lectures"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: අරමුණු (goals) තබා ගත්තද ඒවා පසුපස නොයන්නේ නම්, ප්‍රගතිය තක්සේරු කිරීමට සහ පරාවර්තනය (reflect) කිරීමට ක්‍රම නොමැති වීම (Assessing your progress) PDP ක්‍රියාවලියේ ඇති ප්‍රධාන අඩුපාඩුවකි."
+    },
+    {
+        question: "6. Which of the following best evaluates the effectiveness of using a reflective practice model in personal development?",
+        options: ["It increases the number of job offers received", "It replaces the need for feedback from others", "It allows structured self-examination leading to deeper learning and behavioral change", "It guarantees academic success in technical subjects"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: පරාවර්තන භාවිතාව (Reflective practice) ගැඹුරු ඉගෙනුම (deep learning) සහ චර්යාත්මක වෙනස්කම් ඇති කිරීමට මඟ පෙන්වන ව්‍යුහගත ස්වයං-පරීක්ෂාවක් (structured self-examination) ලබා දෙයි."
+    },
+    {
+        question: "7. You are mentoring a first-year IT student. Based on your knowledge of PDP, how would you design a simple PDP structure for them?",
+        options: ["Provide a list of motivational quotes to inspire confidence", "Ask them to memorize definitions of cognitive styles", "Help them set clear goals, assess current skills, identify learning methods, and reflect on progress", "Encourage them to compare their marks with others"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: PDP හි අදියරයන්ට අනුව, ආරම්භක ව්‍යුහය විය යුත්තේ: තමන්ව තේරුම් ගැනීම (අවශ්‍යතා තක්සේරු කිරීම), අනාගතය තීරණය කිරීම (ඉලක්ක), අවශ්‍ය දේ හඳුනා ගැනීම (ඉගෙනුම් පරතරය), ඉගෙනුම් ක්‍රම යෙදීම, සහ ප්‍රගතිය තක්සේරු කිරීමයි."
+    },
+    {
+        question: "8. What does the term cognition primarily refer to?",
+        options: ["The way people dream and sleep", "A scientific method of measuring intelligence", "Mental processes used to understand and interact with the world", "An emotional response to external stimuli"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: Cognition (සංජානනය) යනු මිනිසුන් ලෝකය පිළිබඳව දැනුවත් වන සහ එය තේරුම් ගන්නා සියලුම මානසික ක්‍රියාවලීන් ඇතුළත් පොදු පදයකි."
+    },
+    {
+        question: "9. Which psychological test is commonly used to evaluate personality traits?",
+        options: ["Myers-Briggs Type Indicator", "DISC Assessment", "Big Five Personality Test", "Stanford-Binet IQ Test"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: 'Big Five Personality Test' (විශාල පෞරුෂත්ව සාධක පහේ පරීක්ෂණය) පෞරුෂත්ව ලක්ෂණ (personality traits) ඇගයීම සඳහා බහුලව භාවිතා වේ."
+    },
+    {
+        question: "10. How does perception differ from sensation in the context of cognitive processes?",
+        options: ["Sensation is emotional while perception is physical", "Perception involves selecting and interpreting sensory input, whereas sensation is raw input", "Sensation is limited to smell and taste; perception includes thought", "Perception occurs in the subconscious, sensation in the conscious"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: සංවේදනය (Sensation) යනු සංවේදී දත්ත (raw input) වන අතර, සංජානනය (Perception) යනු එම තොරතුරු තෝරා ගැනීම, සංවිධානය කිරීම, අර්ථකථනය කිරීම සහ ප්‍රතිචාර දැක්වීමයි."
+    },
+    {
+        question: "11. Why is understanding one's cognitive style important in personal development planning?",
+        options: ["It helps to reduce physical stress during exams", "It ensures conformity to organizational rules", "It guides individuals in selecting learning strategies and making effective decisions", "It eliminates the need for teamwork"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: සංජානන ශෛලිය (Cognitive style) තේරුම් ගැනීමෙන්, පුද්ගලයන්ට ඔවුන්ගේ ඉගෙනුම් උපාය මාර්ග (learning strategies) සහ ඵලදායී තීරණ ගැනීමේ ක්‍රම තෝරා ගැනීමට මඟ පෙන්වනු ලැබේ."
+    },
+    {
+        question: "12. If a student prefers to experiment, brainstorm, and explore new ideas in uncertain situations, which cognitive style is most likely dominant?",
+        options: ["Knowing", "Planning", "Creating", "Evaluating"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: අත්හදා බැලීම්, අදහස් උත්පාදනය (brainstorm), අවිනිශ්චිතභාවය සහ අවදානම් ගැනීම (risk-taking) යනු 'Creating' (නිර්මාණය කිරීමේ) සංජානන ශෛලියේ ලක්ෂණ වේ."
+    },
+    {
+        question: "13. A team member consistently focuses on facts, details, and evidence when making decisions. What potential drawback might this cognitive style have in a fast-paced, creative environment?",
+        options: ["Resistance to ambiguity and slow decision-making", "Tendency to dominate discussions", "Lack of motivation and drive", "Inability to recall facts"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: 'Knowing' (දැනගැනීමේ) ශෛලියේ පුද්ගලයන් තොරතුරු, කරුණු සහ සාක්ෂි මත අවධානය යොමු කරයි. මෙහි විභව ගැටලුව වන්නේ තීරණ ගැනීමට ප්‍රමාද වීම සහ අවිනිශ්චිතතාවයට (ambiguity) ප්‍රතිරෝධය දැක්වීමයි."
+    },
+    {
+        question: "14. Which scenario illustrates a fundamental attribution error in a workplace setting?",
+        options: ["Believing a coworker is late due to poor time management, ignoring traffic delays", "Recognizing that a teammate succeeded due to external training support", "Taking credit for a successful group project", "Attributing one's own failure to poor instructions"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: මූලික ආරෝපණ දෝෂය (Fundamental Attribution Error) යනු, අන් අයගේ හැසිරීම් දකින විට, එයට හේතුව බාහිර තත්වයන් (external causes) නොව, අභ්‍යන්තර ලක්ෂණ (internal causes) බවට ආරෝපණය කිරීමේ ප්‍රවණතාවයි."
+    },
+    {
+        question: "15. An individual believes they have little control over events in their life and often blames external factors for failures. Which concept best evaluates this mindset?",
+        options: ["High emotional intelligence", "Internal locus of control", "External locus of control", "Optimistic attribution style"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: බාහිර පාලන කේන්ද්‍රය (External locus of control) යනු, තම ඉරණම තමන්ගේ පාලනයට වඩා බාහිර පුද්ගලයන් සහ තත්වයන් (People and circumstances control my fate!) විසින් පාලනය කරන බව විශ්වාස කිරීමයි."
+    },
+    {
+        question: "16. You are designing a development plan for a group of students with different cognitive styles. What is the best strategy to ensure all members engage meaningfully?",
+        options: ["Assign the same learning method to all students", "Encourage brainstorming only during final evaluations", "Use a variety of activities that cater to knowing, planning, and creating styles", "Eliminate reflective practices to save time"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: විවිධ සංජානන ශෛලීන් (cognitive styles) සහිත කණ්ඩායමක් සඳහා, 'Knowing', 'Planning', සහ 'Creating' යන ශෛලීන්ට ගැලපෙන විවිධ ක්‍රියාකාරකම් භාවිතා කිරීම වඩාත් සුදුසු වේ."
+    },
+    {
+        question: "17. Which of the following best defines values according to the lecture?",
+        options: ["Emotional responses shaped by early life experiences", "Observable behaviors in professional settings", "Principles that help determine right and wrong and guide actions", "Religious or political opinions acquired during adulthood"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: අගයන් (Values) යනු නිවැරදි හා වැරදි දේ තීරණය කිරීමට සහ විවිධ අවස්ථාවන්හිදී ක්‍රියා කළ යුතු ආකාරය මඟ පෙන්වීමට උපකාරී වන මූලධර්ම වේ."
+    },
+    {
+        question: "18. Which of these is not listed as a foundational human value in the lecture?",
+        options: ["Compassion", "Gratitude", "Innovation", "Respect"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: දේශනයේදී පදනමේ අගයන් (Foundation values) ලෙස Integrity, Compassion, Respect, Justice, Courage, Wisdom, සහ Gratitude ලැයිස්තුගත කර ඇත. Innovation (නවෝත්පාදනය) එම ලැයිස්තුවේ නැත."
+    },
+    {
+        question: "19. What is the term for internalized values becoming criteria for guiding action?",
+        options: ["Self-perception", "Core competence", "Personal standards", "Value system"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: අභ්‍යන්තරකරණය කරන ලද අගයන් (internalized values) ක්‍රියාවන්ට මඟ පෙන්වීමේ නිර්ණායකයක් (criterion for guiding one’s action) බවට පත්වීම 'අගය පද්ධතියක්' (value system) ලෙස හැඳින්වේ."
+    },
+    {
+        question: "20. How do beliefs differ from attitudes in the context of personal development?",
+        options: ["Beliefs are fixed, while attitudes are biologically inherited", "Beliefs are broader worldviews, while attitudes are emotional responses to specific situations", "Attitudes are internal principles, and beliefs are only visible actions", "Beliefs are measurable, while attitudes cannot be identified"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: ආකල්පයක් (Attitude) යනු අත්දැකීම් සහ ස්වභාවය මත පදනම් වූ ක්‍රියා කිරීමට ඇති නැඹුරුවකි. ඊට හැඟීමක් (affect/emotion), චින්තනයක් (cognition/belief), සහ හැසිරීමක් (behavior) ඇතුළත් වේ. Beliefs (විශ්වාසයන්) යනු සත්‍ය යැයි අප සලකන පුළුල් සංකල්ප වේ."
+    },
+    {
+        question: "21. Why are focus values more visible in our daily decision-making compared to foundation or future values?",
+        options: ["Because they are emotionally irrelevant and easily ignored", "Because they are defined by academic institutions", "Because they reflect our current priorities and worldviews", "Because they are selected through standardized tests"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: 'Focus values' (නාභිගත අගයන්) අපගේ වර්තමාන ලෝක දෘෂ්ටිය, තීරණ ගැනීමේ නිර්ණායක සහ අපගේ ශක්තියේ අවධානය පිළිබිඹු කරන නිසා, ඒවා එදිනෙදා තීරණ ගැනීමේදී වඩාත් දැනුවත් වේ."
+    },
+    {
+        question: "22. A student highly prioritizes financial security, discipline, and routine in their personal and academic life. Which category of values do these likely represent?",
+        options: ["Future Values", "Cultural Norms", "Focus Values", "Foundation Values"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: මූල්‍ය වගකීම (Financial Responsibility) සහ වැඩ ආචාර ධර්ම/විශිෂ්ටත්වය (Work Ethic and Excellence) වැනි වර්තමාන ප්‍රමුඛතා නාභිගත අගයන් (Focus values) ලෙස දැක්විය හැක."
+    },
+    {
+        question: "23. You are mentoring a student who values adventure, creativity, and legacy. According to the lecture, these values are best categorized as:",
+        options: ["Focus values", "Ethical values", "Cultural values", "Future values"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: Legacy (උරුමය), Adventure and Exploration (ත්‍රාසජනක බව සහ ගවේෂණය), සහ Innovation (නවෝත්පාදනය/Creativity) යනු අප අපේක්ෂා කරන අනාගතය නියෝජනය කරන බැවින් ඒවා 'Future values' (අනාගත අගයන්) ලෙස වර්ගීකරණය වේ."
+    },
+    {
+        question: "24. Which of the following combinations most clearly reflects a potential conflict between values in a team setting?",
+        options: ["Kindness and empathy", "Honesty and transparency", "Creativity and rule-following", "Loyalty and teamwork"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: Creativity (නිර්මාණශීලිත්වය) යනු නීති කඩ කිරීම සහ අත්හදා බැලීම් කිරීම (wants to break rules) විය හැකි අතර, rule-following (නීති අනුගමනය) යනු ව්‍යුහය (structure) සහ විනය (discipline) කෙරෙහි අවධාරණය කිරීමකි. මේවා ගැටුමක් ඇති කළ හැකි අගයන් වේ."
+    },
+    {
+        question: "25. A software engineer refuses to compromise on project quality despite tight deadlines, citing integrity and responsibility as key drivers. How would you evaluate this behavior in terms of value alignment?",
+        options: ["It reflects a mismatch between technical and business goals", "It shows an overcommitment to future values", "It demonstrates strong alignment with foundation values influencing ethical decisions", "It indicates emotional instability in a high-pressure environment"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: Integrity (සංඛ්‍යාතය), Responsibility (වගකීම) සහ Courage (ධෛර්යය) යනු සදාචාරාත්මක තීරණ (ethical decisions) ගැනීමට බලපාන පදනමේ අගයන් (Foundation values) වේ."
+    },
+    {
+        question: "26. You're developing a training program to help students align their career goals with personal values. Which of the following steps would best initiate this alignment process?",
+        options: ["Assign each student a predefined career based on their grades", "Conduct a team-building exercise and skip self-assessment", "Begin with reflective exercises to identify foundation, focus, and future values", "Limit the process to technical skills assessments"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: වෘත්තීය ඉලක්ක පුද්ගලික අගයන් සමඟ පෙළගැස්වීමේ ක්‍රියාවලිය ආරම්භ කිරීම සඳහා, පදනම, නාභිගත සහ අනාගත අගයන් (foundation, focus, and future values) හඳුනා ගැනීමට පරාවර්තන අභ්‍යාස (reflective exercises) සමඟ ආරම්භ කිරීම වඩාත් සුදුසු වේ."
+    },
+    {
+        question: "27. Which stage in Tuckman's model of team development involves resolving conflicts and establishing norms?",
+        options: ["Performing", "Forming", "Adjourning", "Norming"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: Tuckman's model හි 'Norming' (සම්මතකරණය) අවධියේදී, මිනිසුන් කණ්ඩායමේ කොටසක් ලෙස හැඟෙන අතර, ඔවුන් වෙනත් දෘෂ්ටිකෝණ පිළිගන්නේ නම් වැඩ සාක්ෂාත් කරගත හැකි බව වටහාගෙන, ගැටුම් විසඳා සම්මතයන් (norms) ස්ථාපිත කරයි."
+    },
+    {
+        question: "28. According to Dr. Meredith Belbin, what is a \"team role\"?",
+        options: ["A mandatory position given by management", "A technical duty assigned to the most experienced person", "A tendency to behave, contribute, and interrelate in a particular way within a team", "A designation decided based on academic performance"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: Belbin ගේ නිර්වචනයට අනුව 'Team Role' (කණ්ඩායම් භූමිකාව) යනු කණ්ඩායමක් තුළ විශේෂිත ආකාරයකින් හැසිරීමට, දායක වීමට සහ අන්තර් සම්බන්ධ වීමට ඇති නැඹුරුවකි."
+    },
+    {
+        question: "29. Why is the storming stage of team development often challenging?",
+        options: ["Members lack proper equipment", "Goals are already fully aligned", "Conflicts may arise as roles and responsibilities are clarified", "Team members ignore the team leader"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: 'Storming' (ගැටුම්) අවධිය ගැටළු සහගත වන්නේ, සාමාජිකයන් තම භූමිකාවන් (roles) සහ වගකීම් (responsibilities) පැහැදිලි කිරීමට උත්සාහ කරන විට අභ්‍යන්තර ගැටුම් (conflicts) සහ සතුරුකම් (hostility) මතුවිය හැකි බැවිනි."
+    },
+    {
+        question: "30. How do \"formal\" and \"informal\" roles differ in a team setting?",
+        options: ["Formal roles are only for managers; informal roles are for subordinates", "Informal roles are assigned by HR departments", "Formal roles are officially assigned, while informal roles emerge through group interaction", "Informal roles are based on external expertise"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: විධිමත් භූමිකාවන් (Formal roles) සංවිධානයේ ව්‍යුහය මගින් නියම කරනු ලබන අතර, අවිධිමත් භූමිකාවන් (Informal roles) කණ්ඩායමේ ගතිකත්වය (group's dynamics) හරහා පරිණාමය වේ."
+    },
+    {
+        question: "31. You're observing a new software development team. Members are polite but hesitant to share ideas. Based on Tuckman's model, which stage is this team most likely in?",
+        options: ["Storming", "Adjourning", "Norming", "Forming"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: 'Forming' (ආරම්භක) අවධියේදී, කණ්ඩායම හුරුපුරුදු වන අතර, විධිමත්භාවය පවත්වා ගෙන යනු ලබන අතර, සාමාජිකයන් ආගන්තුකයන් ලෙස සලකනු ලබයි. මෙය අවිනිශ්චිතභාවය (uncertainty) සහ අදහස් දැක්වීමට පසුබට වීම (hesitant to share ideas) ඇති කාලයකි."
+    },
+    {
+        question: "32. A team includes a member who is imaginative, unorthodox, and good at solving complex problems. According to Belbin's theory, which team role does this describe?",
+        options: ["Coordinator", "Implementer", "Team Worker", "Plant"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: 'Plant' (ශාක) භූමිකාව 'Thought Oriented' (චින්තනයට නැඹුරු වූ) භූමිකාවක් වන අතර, නව අදහස් (new ideas) සහ සංකල්ප ගෙන එන, නව නිපැයුම්කරුවන් (innovators) වන, සහ නිර්මාණශීලී පුද්ගලයින් විස්තර කරයි."
+    },
+    {
+        question: "33. Which combination of Belbin roles could create a productive but potentially conflicting dynamic if not managed well?",
+        options: ["Team Worker and Resource Investigator", "Implementer and Shaper", "Monitor Evaluator and Completer-Finisher", "Coordinator and Plant"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: Shaper (හැඩගස්වන්නා) යනු extroverted, බලවත්, සහ අභියෝගවලට එඩිතර වන අයෙකි. Implementer (ක්‍රියාත්මක කරන්නා) යනු විනයගරුක, ක්‍රමානුකූලව වැඩ කරන අයෙකි. මෙම භූමිකාවන් දෙකේ (Shaper's drive and Implementer's rigidity) අන්තර් ක්‍රියාකාරිත්වය කළමනාකරණය නොකළහොත් ගැටුම් ඇති විය හැක."
+    },
+    {
+        question: "34. A project team delivered excellent results but had frequent internal disputes. What should be evaluated to improve future team effectiveness?",
+        options: ["The color scheme of reports", "Team's internet speed", "Team roles and communication patterns", "Office seating arrangement"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: ඉහළ ප්‍රතිඵලයක් තිබියදීත් ඇතිවන අභ්‍යන්තර ආරවුල් (internal disputes) පෙන්නුම් කරන්නේ කණ්ඩායම් භූමිකාවන් (team roles) සහ අන්තර් පුද්ගල සන්නිවේදන රටා (communication patterns) තුළ ගැටළු ඇති බවයි."
+    },
+    {
+        question: "35. You're forming a cross-functional team to develop a new mobile app. Which strategy best ensures role diversity and balanced team dynamics?",
+        options: ["Assign team roles based solely on academic grades", "Select only introverts for better focus", "Include individuals representing different Belbin roles based on strengths and behavioral assessments", "Avoid mixing personality types to reduce conflict"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: ඵලදායී කණ්ඩායමක් සඳහා, ශක්තීන් (strengths) සහ චර්යාත්මක තක්සේරු (behavioral assessments) මත පදනම්ව විවිධ Belbin භූමිකාවන් නියෝජනය කරන පුද්ගලයන් ඇතුළත් කිරීම හොඳම ක්‍රමයයි."
+    },
+    {
+        question: "36. What is the definition of power in the context of sociology, as per Max Weber?",
+        options: ["The right to make financial decisions", "The ability to influence outcomes through fear", "The probability of carrying out one's will despite resistance", "The authority granted by government institutions"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: Max Weber ට අනුව බලය (Power) යනු ප්‍රතිරෝධය නොතකා කෙනෙකුගේ කැමැත්ත ඉටු කර ගැනීමේ හැකියාවයි."
+    },
+    {
+        question: "37. Which type of power is based on admiration and interpersonal attraction?",
+        options: ["Reward Power", "Coercive Power", "Legitimate Power", "Referent Power"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: 'Referent Power' (ආධාරක බලය) හෝ Charismatic Power (ආකර්ෂණීය බලය) පදනම් වන්නේ අන්තර් පුද්ගල ආකර්ෂණය (interpersonal attraction) සහ අන් අයගේ ප්‍රශංසාව මතය."
+    },
+    {
+        question: "38. A new manager is admired for her ethical leadership and calm demeanor during a crisis. Her team follows her suggestions even without formal authority. Which type of power is she most likely using?",
+        options: ["Coercive Power", "Reward Power", "Referent Power", "Legitimate Power"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: කෙනෙකුගේ පුද්ගලික ගුණාංග, චමත්කාරය සහ විශ්වාසය මත පදනම් වූ බලය Referent Power වේ."
+    },
+    {
+        question: "39. A software engineer proposes a design change that is immediately accepted by the team due to his deep expertise in system architecture. What type of power is he exercising?",
+        options: ["Reward Power", "Expert Power", "Coercive Power", "Legitimate Power"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: 'Expert Power' (විශේෂඥ බලය) පදනම් වන්නේ නියෝජිතයා සතුව ඉලක්කයට අවශ්‍ය දැනුම (knowledge target needs) තිබීම මතය."
+    },
+    {
+        question: "40. In what way did Stanley Milgram's obedience experiments contribute to our understanding of organizational behavior?",
+        options: ["They confirmed that rewards increase productivity", "They revealed the negative impact of technology in teams", "They demonstrated how authority figures can influence ethical decision-making", "They promoted laissez-faire leadership as most effective"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: Milgram ගේ කීකරුකම පිළිබඳ පර්යේෂණවලින් පෙන්නුම් කළේ බලයලත් පුද්ගලයන් (authority figures) සදාචාරාත්මක තීරණ ගැනීමට බලපෑම් කළ හැකි ආකාරයයි."
+    },
+
+    /* ---------------------------------- Paper 2: (40 Questions) - Source: ProfessionalSkills_answersPg86All.pdf & Lectures ---------------------------------- */
+    {
+        question: "41. A diverse workforce might:",
+        options: ["be a bad marketing move", "expand a company's customer base", "increase the loss of clients.", "make businesses less competitive"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: විවිධත්වයෙන් යුත් ශ්‍රම බලකායක් (diverse workforce) විවිධ පසුබිම්, අත්දැකීම් සහ දෘෂ්ටිකෝණ ගෙන එයි. මෙය සමාගමකට විවිධ වෙළඳපල සහ පාරිභෝගික කොටස් වඩා හොඳින් අවබෝධ කර ගැනීමට සහ සම්බන්ධ වීමට උපකාරී වන අතර, එමඟින් පාරිභෝගික පදනම පුළුල් කරයි."
+    },
+    {
+        question: "42. Transformational leader is:",
+        options: ["Someone who is involved in organizational change.", "A leader who tries to change the management.", "A leader who provided new ways of carrying out management.", "A leader who provide individualized consideration, inspiring individuals, developing trust, and encouraging creativity and personal growth."],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: Transformational Theory (පරිවර්තනීය න්‍යාය) ට අනුව නායකයින් පුද්ගලයන් දිරිමත් කිරීම, විශ්වාසය ගොඩනැගීම, නිර්මාණශීලීත්වය සහ පෞද්ගලික වර්ධනය දිරිමත් කිරීම සිදු කරයි."
+    },
+    {
+        question: "43. A process in which a group of individuals generate and state ideas, but in which the rules prohibit questioning, evaluating, or rejecting any ideas, even if they seem ridiculous is called:",
+        options: ["Affinity grouping", "Six-Thinking Hats", "Brainstorming", "Delphi techniques"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: Brainstorming (අදහස් උත්පාදනය) යනු නිශ්චිත ගැටලුවක් සඳහා අදහස් ස්වයංසිද්ධව රැස් කිරීම මගින් නිගමනයකට එළඹීමට උත්සාහ කරන කණ්ඩායම් නිර්මාණශීලී තාක්ෂණයකි. මෙහිදී අදහස් ප්‍රශ්න කිරීම හෝ ඇගයීම තහනම් වේ."
+    },
+    {
+        question: "44. Zelna is following the time management steps. She just made a list of her tasks and estimated how much time they will take. What should she do next?",
+        options: ["She should take a break and eat a snack.", "She should prioritize her tasks, or put them in order of importance.", "She should cross off tasks that she doesn't want to do right away.", "She should organize her tasks alphabetically."],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: කාල කළමනාකරණයේ (time management) මූලික පියවර වන්නේ කාර්යයන් ලැයිස්තුගත කිරීමෙන් පසු, ඒවායේ වැදගත්කම අනුව ප්‍රමුඛතා (prioritize) දීමයි."
+    },
+    {
+        question: "45. Having young people in a team becomes an advantage because:",
+        options: ["their maturity will be an asset to the employer", "they have high adaptability and agility to unexpected circumstances.", "they are considered as very loyal to employers", "they are considered as technically competent due to experience."],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: තරුණ පුද්ගලයන් නම්‍යශීලීභාවය (Flexibility) සහ වෙනස්කම් වලට අනුවර්තනය වීමේ ඉහළ හැකියාවක් (high adaptability and agility) පෙන්නුම් කරයි."
+    },
+    {
+        question: "46. Which one of the following is not a characteristic of a team?",
+        options: ["Minimal and formal knowledge sharing", "Individual and collective responsibility", "Fluid dimension to roles and tasks", "Collective output"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: කණ්ඩායමක් (team) යනු තොරතුරු, සම්පත්, දැනුම සහ කුසලතා සම්බන්ධයෙන් අන්තර් රඳා පවතින සහ පොදු ඉලක්කයක් සපුරා ගැනීමට උත්සාහ කරන පුද්ගලයන් සමූහයකි. සාර්ථක කණ්ඩායමක විවෘත සහ ඵලදායී දැනුම හුවමාරුවක් (knowledge sharing) ඇත, එබැවින් 'Minimal and formal knowledge sharing' යනු කණ්ඩායමක ලක්ෂණයක් නොවේ."
+    },
+    {
+        question: "47. Which of these stages represents the time characterized with anxiety and uncertainty when the group is just starting to come together:",
+        options: ["Forming", "Norming", "Storming", "Adjourning"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: Tuckman's model හි 'Forming' (ආරම්භක) අවධියේදී සාමාජිකයින් එකිනෙකා දැන හඳුනා ගන්නා අතර, අවිනිශ්චිතතාවය (uncertainty) සහ කනස්සල්ල (anxiety) පවතී."
+    },
+    {
+        question: "48. Features of a thinking environment in decision making does not include:",
+        options: ["Competition", "Emotional release", "Incisive questions", "Appreciation and criticism"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: චින්තන පරිසරයක (thinking environment) ලක්ෂණවලට ඇතුළත් වන්නේ සහයෝගීතාවය (collaboration) සහ දිරිගැන්වීම් (encouragement) මිස තරඟය (competition) නොවේ."
+    },
+    {
+        question: "49. During the storming stage:",
+        options: ["Team members learn to cooperate and support one another while establishing patterns of communication and behavior.", "Marked by conflict within the group as team members push boundaries and challenge authority in attempt to clarify the team's goals, values, and norms.", "The team functions at its highest level of productivity and the focus of each member shifts from individual to group concerns.", "The group is preparing to disband or is facing major changes in its mission, membership, or environment."],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: 'Storming' අවධිය අභ්‍යන්තර ගැටුම්, බල අරගල සහ භූමිකාවන් පැහැදිලි කිරීමට උත්සාහ කිරීම මගින් සංලක්ෂිත වේ."
+    },
+    {
+        question: "50. Treating a person unfairly because of who they are or because they possess certain characteristics such as race, disability and religion is:",
+        options: ["Discrimination", "Absenteeism", "Affordability", "Stereotyping"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: 'Discrimination' (වෙනස් කොට සැලකීම) යනු ජාතිය, ආගම, ආබාධිතභාවය වැනි ලක්ෂණ මත පදනම්ව පුද්ගලයන්ට අසාධාරණ ලෙස හෝ පක්ෂග්‍රාහී ලෙස සැලකීමයි."
+    },
+    {
+        question: "51. What is the term for the set of behaviours and tasks that a member of the group is expected to perform because he or she is a member of the group?",
+        options: ["Role making", "Synergy", "Group roles", "Virtual teamwork"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: 'Group roles' (කණ්ඩායම් භූමිකාවන්) යනු කණ්ඩායමක සාමාජිකයෙකුගෙන් අපේක්ෂා කරන හැසිරීම්, වගකීම් සහ කාර්යයන් සමූහයයි."
+    },
+    {
+        question: "52. One of the following things is not a scheduling method.",
+        options: ["Social media", "Time tables", "To do lists", "Diary"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: Social media (සමාජ මාධ්‍ය) යනු කාලසටහන් සකස් කිරීමේ (scheduling) ක්‍රමයක් නොවේ. Time tables, To do lists, සහ Diary යනු කාලය කළමනාකරණය කිරීමේ මෙවලම් හෝ ක්‍රම වේ."
+    },
+    {
+        question: "53. What word is used to describe our personal belief system regarding what is right and wrong?",
+        options: ["Morals", "Ethics", "Choices", "Beliefs"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: 'Morals' (සදාචාරය) යනු අප පෞද්ගලිකව නිවැරදි හා වැරදි යැයි විශ්වාස කරන දේ පිළිබඳ අපගේ පෞද්ගලික විශ්වාස පද්ධතියයි. 'Ethics' යනු විශ්වීයව පිළිගත් මූලධර්ම සමූහයකි."
+    },
+    {
+        question: "54. Which of the following statements best captures the nature of leadership as it should be for your business to ensure the business continued future success?",
+        options: ["Leaders focus on profit, organizing people, planning with a vision", "Leaders focus on budgeting, aligning people with a shared vision and solving problems", "Leaders focus on motivating people, planning and organizing and staffing", "Leaders focus on setting direction, align people with shared vision and motivate people"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: ඵලදායී නායකත්වය යනු දිශාව සැකසීම (setting direction), පොදු දැක්මක් සමඟින් මිනිසුන් පෙළගැස්වීම (align people with shared vision) සහ කණ්ඩායම අභිප්‍රේරණය කිරීම (motivate people) යන්නයි."
+    },
+    {
+        question: "55. A stakeholder group has high interest in a business and low power over the business. What would be the most appropriate way for the business to communicate with this stakeholder group?",
+        options: ["Keep satisfied", "Manage closely", "Keep informed.", "Monitor with minimum effort"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: බලය අඩු (Low Power), උනන්දුව ඉහළ (High Interest) පාර්ශවකරුවන් 'Keep informed' (දැනුවත් කිරීම) අවශ්‍ය වේ. ඔවුන්ට වැදගත් තොරතුරු ලබා දිය යුතු අතර, ඔවුන්ගෙන් අදහස් විමසිය යුතුය."
+    },
+    {
+        question: "56. Contingency theory of leadership explains:",
+        options: ["That leader continuously keeps his/her focus on Four P's - Purpose, People, Planet, Probity", "That there is no single style of leadership appropriate to all situations", "That Leader is concerned with the interaction of 3 areas, i.e. Task, Team, and Individual", "That leadership style depends on leader's behavior and actions, rather than their traits and skills"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: Contingency theory (අනියම් න්‍යාය) පවසන්නේ ඵලදායී නායකත්වය තත්වය (situation) මත රඳා පවතින බවයි. එනම්, සියලුම අවස්ථාවන්ට සුදුසු තනි නායකත්ව ශෛලියක් නොමැති බවයි."
+    },
+    {
+        question: "57. The most generous setting for self-discloser is:",
+        options: ["Small group", "A discussion with a friend", "Public speaking situation", "Large group"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: ස්වයං-නිරාවරණය (self-disclosure) යනු පෞද්ගලික තොරතුරු බෙදාගැනීමයි. මෙය වඩාත් ත්‍යාගශීලීව (generous) සිදුවන්නේ මිතුරෙකු හෝ සමීපතමයන් සමඟ වන සාකච්ඡාවකදීය. මෙහිදී විශ්වාසය සහ සමීපභාවය හේතුවෙන් 'Hidden Area' (සැඟවුණු ප්‍රදේශය) පහළට විවෘත වේ."
+    },
+    {
+        question: "58. What does not computer ethics includes?",
+        options: ["Environmental", "Political", "Social", "Personal"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: 'Computer Ethics' (පරිගණක ආචාර ධර්ම) සාමාන්‍යයෙන් Social, Political, සහ Personal වැනි ගැටළු ඇතුළත් කරයි. කෙසේ වෙතත්, ACM Code of Ethics හි පරිසරය ගැන සඳහන් වන නමුත්, මෙම MCQ හිදී 'Environmental' යන්න අනෙක් අංග තුනට වඩා වෙනස් වචනයක් ලෙස අදහස් කරන්නට පුළුවන. එහෙත්, ලබා දී ඇති පැහැදිලි කිරීම් වලට අනුව, පරිගණක ආචාර ධර්ම Social, Political සහ Personal ගැටළු ඇතුළත් කරන බවට තහවුරු කරයි. පරිගණක ආචාර ධර්මවල ප්‍රධාන අවධානය යොමු වන්නේ සෘජු පරිගණක භාවිතය ආශ්‍රිත කරුණු මත බැවින්, 'Environmental' යන්න ඉන් බැහැර වේ."
+    },
+    {
+        question: "59. John Adair in his Functional Theory claims that the effectiveness of a leader is concerned upon meeting areas of need within the work group.",
+        options: ["Five", "Two", "Three", "Four"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: John Adair ගේ Functional Theory (ක්‍රියාකාරී න්‍යාය) ට අනුව, නායකයෙකුගේ ඵලදායීතාවය වැඩ කරන කණ්ඩායම තුළ ඇති ප්‍රධාන අවශ්‍යතා ක්ෂේත්‍ර 3ක් (Task, Team, Individual) සපුරාලීම මත රඳා පවතී."
+    },
+    {
+        question: "60. External links may provide incentives to:",
+        options: ["Introduce improvements to products", "Introduce new working practices", "Attend business exhibitions", "Raise finance"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: බාහිර සම්බන්ධතා (External links) හරහා වෙළඳපල ප්‍රවණතා (market trends) සහ පාරිභෝගික අවශ්‍යතා පිළිබඳ දැනුම ලබා ගැනීමෙන් නිෂ්පාදන වැඩිදියුණු කිරීම් (improvements to products) සඳහා දිරිගැන්වීම් ලබා දිය හැකිය."
+    },
+    {
+        question: "61. A successful team is not:",
+        options: ["Having mutual respect for members", "Working together towards a common goal", "Reluctant to contribute from the point of view of someone else's role", "Having diversity of member experiences/skills"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: සාර්ථක කණ්ඩායමක් තුළ සාමාජිකයින් භූමිකාවන් පවරා තිබුණද, අනෙකාගේ භූමිකාවට දායක වීමට පසුබට නොවිය යුතුය (not Reluctant to contribute) (එසේ නොමැති නම් එය 'Abdication' නම් ගැටලුවකි)."
+    },
+    {
+        question: "62. Pasindu is a software engineer in a leading S/W company in the country. He got himself registered to do a certification course in a new programming language that is a new trend in the industry. What ACM-SE-CODE has motivated him to do so?",
+        options: ["Profession", "Self", "Public", "Colleagues"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: ACM/IEEE Software Engineering Code of Ethics හි 'Profession' (වෘත්තිය) මූලධර්මය, ජීවිත කාලය පුරාම ඉගෙනීම (Lifelong learning) සහ නව තාක්ෂණයන් සමඟ යාවත්කාලීන වීම දිරිමත් කරයි."
+    },
+    {
+        question: "63. Failing to manage your time can lead to some consequences, such as..",
+        options: ["Greater productivity and efficiency", "Less stress", "A better professional reputation", "Missed deadlines"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: කාලය කළමනාකරණය කිරීමට අපොහොසත් වීමෙන් ඇතිවන ප්‍රධාන ඍණාත්මක ප්‍රතිඵලයක් වන්නේ නියමිත කාලසීමාවන් අහිමි වීම (Missed deadlines)යි. (ඉතිරි විකල්ප ධනාත්මක වේ.)"
+    },
+    {
+        question: "64. Looking at the following sentences can you identify which is a Strength",
+        options: ["New market opened up", "Poor staff training", "Loyal customer base", "New competition"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: SWOT විශ්ලේෂණයේදී, Strengths (ශක්තීන්) යනු ව්‍යාපාරයේ අභ්‍යන්තර ධනාත්මක සාධක වේ. Loyal customer base (පක්ෂපාතී පාරිභෝගික පදනම) යනු අභ්‍යන්තර ශක්තියකි."
+    },
+    {
+        question: "65. Select the incorrect statement which describe in Johari Window Model.",
+        options: ["Area that cannot be known to others unless we disclose it is the Hidden area", "Close area that we are richer and more complex than which we and others identified as Hidden area", "Blind area demonstrates the things that do not know by us, but others can see more clearly", "Open area is the part which we aware and which is known to others"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: විකල්ප (b) හි විස්තරය 'Unknown area' (නොදන්නා ප්‍රදේශය) ට අදාළ වේ. Hidden area (සැඟවුණු ප්‍රදේශය) යනු අප දන්නා නමුත් අන් අය නොදන්නා ප්‍රදේශයයි."
+    },
+    {
+        question: "66. SWOT analysis looks at:",
+        options: ["The internal factors only", "Both internal and external factors", "The external factors only", "None of the above"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: SWOT විශ්ලේෂණය අභ්‍යන්තර (Strengths, Weaknesses) සහ බාහිර (Opportunities, Threats) යන සාධක දෙකම දෙස බලයි."
+    },
+    {
+        question: "67. Approaches to the study of leadership which emphasis the personality of the leader are termed:",
+        options: ["Situational theories", "Trait theories", "Behavioral theories", "Contingency theories"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: Trait Theories (ලක්ෂණ න්‍යායන්) නායකයින් සතු සහජ පෞරුෂත්ව ලක්ෂණ (personality traits) හෝ ගුණාංග කෙරෙහි අවධාරණය කරයි."
+    },
+    {
+        question: "68. To increase your self-awareness, you should:",
+        options: ["Listen to others.", "Seek out information to reduce your blind self.", "All of the options/choices.", "Increase your open self."],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: ස්වයං-අවබෝධය (self-awareness) වැඩි කිරීමට, Johari Window model අනුව, අන් අයගෙන් ප්‍රතිචාර ලබා ගැනීමෙන් (Seek out information to reduce your blind self) සහ ස්වයං-නිරාවරණය කිරීමෙන් (self-disclosure) 'Open Self' (විවෘත ප්‍රදේශය) වැඩි කළ යුතුය. මේ සියල්ල එකිනෙකට සම්බන්ධ වන අතර ස්වයං-අවබෝධය වැඩි කිරීමට උපකාරී වේ."
+    },
+    {
+        question: "69. What is not 'fair use' in copyrights?",
+        options: ["Using portions of a text book for making slides for a lecture.", "Making copies of Software to sell.", "Using work of others in your research work with proper references.", "Use of open source software for academic work."],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: Fair Use (සාධාරණ භාවිතය) යනු ඇතැම් අරමුණු (විවේචනය, පර්යේෂණ, ඉගැන්වීම් වැනි) සඳහා හිමිකම් ඇති වැඩවල කොටස් භාවිත කිරීමට ඉඩ දෙන නීතිමය සංකල්පයකි. වාණිජමය වශයෙන් මෘදුකාංග පිටපත් සාදා විකිණීම සාධාරණ භාවිතයක් නොවන අතර, එය හිමිකම් උල්ලංඝනය කිරීමකි."
+    },
+    {
+        question: "70. What is the incorrect statement about 'Team Diversity'?",
+        options: ["Religion will hinder expressing many viewpoints in decision making.", "Gender diversity will offer enhanced collaboration when working in teams.", "Cultural issue can affect team interaction through different understandings.", "Age differences will help bring different mindsets and opinions and strengths new ideas."],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: ආගමික විවිධත්වය කණ්ඩායම් සාකච්ඡා පොහොසත් කරන අතර, විවිධ දෘෂ්ටිකෝණ ඉදිරිපත් කිරීමට උපකාරී වේ. 'හීන කරයි' (hinder) යනුවෙන් පැවසීම අසත්‍යයකි."
+    },
+    {
+        question: "71. Which word means determine the order for dealing with (a series of items or tasks) according to their relative importance?",
+        options: ["Task", "Planner", "Schedule", "Prioritize"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: Prioritize (ප්‍රමුඛතාවය දීම) යන්නෙහි තේරුම වන්නේ සාපේක්ෂ වැදගත්කම අනුව කාර්යයන් වර්ග කිරීම හෝ පිළිවෙලක් තීරණය කිරීමයි."
+    },
+    {
+        question: "72. What is reflective practice?",
+        options: ["Describing what has gone well.", "None of the above", "The ability to take a critical stance and analyse the situation.", "Looking at oneself in the mirror."],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: Reflective practice (පරාවර්තන භාවිතාව) යනු ඉගෙනීම සහ වැඩිදියුණු කිරීම සඳහා කෙනෙකුගේ අත්දැකීම්, තීරණ සහ ක්‍රියාවන් පිළිබඳව විවේචනාත්මක ස්ථාවරයක් ගෙන විශ්ලේෂණය කිරීමේ හැකියාවයි."
+    },
+    {
+        question: "73. Which of the following is NOT recognized as a misconception about entrepreneurship?",
+        options: ["Successful entrepreneurship needs only a great idea", "Entrepreneurship is found only is small businesses", "Entrepreneurial ventures and small businesses are different", "Entrepreneurship is easy."],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: ව්‍යවසායකත්වය පිළිබඳ පොදු වැරදි මත (misconceptions) වන්නේ: විශිෂ්ට අදහසක් පමණක් අවශ්‍ය බව, එය කුඩා ව්‍යාපාරවල පමණක් දක්නට ලැබෙන බව, සහ එය පහසු බවයි. එබැවින් 'Entrepreneurial ventures and small businesses are different' යන්න සත්‍ය ප්‍රකාශයක් වන අතර වැරදි මතයක් නොවේ."
+    },
+    {
+        question: "74. Licensing arrangements do not create:",
+        options: ["opportunity to transfer technology", "new ownership to IP", "income sources", "market presence"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: බලපත්‍රයක් (License) යනු IP හිමිකරු විසින් තවමත් අයිතිය රඳවා තබා ගනිමින් වෙනත් පුද්ගලයෙකුට IP භාවිතා කිරීමට ලබා දෙන අවසරයකි. එබැවින් බලපත්‍ර ලබා දීමෙන් IP හි නව හිමිකාරිත්වයක් (new ownership) නිර්මාණය නොවේ."
+    },
+    {
+        question: "75. What is NOT helping to do analysis and planning in a business Environment?",
+        options: ["SMART", "SWOT", "TEST", "PEST"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: SMART, SWOT, සහ PEST යනු ව්‍යාපාර විශ්ලේෂණය සහ සැලසුම් කිරීම සඳහා පිළිගත් මෙවලම් වේ. TEST යනු එවැනි පිළිගත් මෙවලමක් නොවේ."
+    },
+    {
+        question: "76. Attributes of a profession do not include:",
+        options: ["Code of ethics", "Investigation", "Accreditation", "Certification"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: වෘත්තියක සාමාන්‍ය ගුණාංග අතරට ආචාර ධර්ම සංග්‍රහය, ප්‍රතීතනය, සහ සහතික කිරීම් අයත් වේ. 'Investigation' (විමර්ශනය) යනු වෘත්තීය දේහයක් තුළ වැරදි විමර්ශනය කිරීමට සිදුවන දෙයක් මිස, වෘත්තියක අර්ථ දැක්වීමේ ප්‍රධාන ගුණාංගයක් නොවේ."
+    },
+    {
+        question: "77. If you wanted to look at factors out of control of the business which may affect it, you would look at:",
+        options: ["Outsiders or Threats", "Strengths and Weaknesses", "Opportunities and Threats", "Strengths and Threats"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: SWOT විශ්ලේෂණයේදී ව්‍යාපාරයේ පාලනයෙන් බැහැර (out of control / external) සාධක වන්නේ Opportunities (අවස්ථා) සහ Threats (තර්ජන) වේ."
+    },
+    {
+        question: "78. Write 3 skills that are required to be an effective leader.",
+        options: ["Clever, Honest, Compassionate", "Ambitious, Energetic, Persistent", "Clever, Organised, Persuasive", "Honest, Integrity, Humility"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: ඵලදායී නායකයෙකුට අවශ්‍ය වන කුසලතා (Skills) අතරට Clever (Intelligent), Organised (Administrative ability), සහ Persuasive (ඒත්තු ගැන්වීමේ හැකියාව) ඇතුළත් වේ. Honest, Integrity, Compassion සහ Humility යනු ලක්ෂණ (Traits) වේ."
+    },
+    {
+        question: "79. According to Tuckman and Jensen, the stage of small group development during which members oppose the group structure as they try to assert their individual personalities is known as:",
+        options: ["Adjourning", "Norming", "Forming", "Storming"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: 'Storming' (ගැටුම්) අවධියේදී සාමාජිකයින් කණ්ඩායම් ව්‍යුහයට විරුද්ධ වන අතර, තම තනි පෞරුෂය (individual personalities) තහවුරු කිරීමට උත්සාහ කරයි, එය ගැටුම් ඇති කරයි."
+    },
+    {
+        question: "80. Imagine a person holds a very strong, emotional antipathy towards members of a different social group. This person really hates these outgroup members. This is best classified as an example of which of the following?",
+        options: ["Functional", "Prejudice", "Stereotyping", "Discrimination"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: Prejudice (පක්ෂග්‍රාහීත්වය) යනු යම් කණ්ඩායමකට එරෙහිව ඇති දැඩි ඍණාත්මක ආකල්පයක් හෝ හැඟීමකි. 'Emotional antipathy' (චිත්තවේගීය විරෝධය) සහ 'really hates' (ඇත්තටම වෛර කරයි) යන යෙදුම් මගින් හැඟීම් (feelings) කෙරෙහි අවධානය යොමු කරන නිසා මෙය Prejudice වේ."
+    },
+    {
+        question: "81. The Term used to describe when a person does not have legal rights to copy someone else's work is called:",
+        options: ["Trolling", "Copyright", "Intellectual Property", "Privacy invasion"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: යමෙකුට වෙනත් අයෙකුගේ නිර්මාණය පිටපත් කිරීමට හෝ ප්‍රතිනිෂ්පාදනය කිරීමට නීත්‍යානුකූල අයිතියක් නොමැති විට, එය Copyright (ප්‍රකාශන අයිතිය) උල්ලංඝනය කිරීමකි. 'Copyright' යන වචනය ප්‍රකාශන හිමිකරුගේ අයිතිය විස්තර කරයි, 'Trolling' (අන්තර්ජාලයේ අපහාස කිරීම) හෝ 'Privacy invasion' (පෞද්ගලිකත්වයට ආක්‍රමණය) යන වචන මෙයට අදාළ නොවේ."
+    },
+    {
+        question: "82. You are the project manager of a software developing team who develops a new health monitoring system for a hospital who is NOT a stakeholder of the project?",
+        options: ["Cashiers", "Hospital administrators", "Doctors", "Patients"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: Stakeholders (පාර්ශ්වකරුවන්) යනු ව්‍යාපෘතියකින් සෘජුවම බලපෑමට ලක්වන හෝ බලපෑම් කළ හැකි පුද්ගලයන්/කණ්ඩායම් වේ. සෞඛ්‍ය අධීක්ෂණ පද්ධතියකට Cashiers (මුදල් අයකැමියන්) සෘජුවම සම්බන්ධ නැත, ඔවුන්ගේ කාර්යභාරය බිල්පත් සහ මුදල් කටයුතු සඳහා සීමා වේ."
+    },
+    {
+        question: "83. Which of the following is true of a belief?",
+        options: ["It is an assumption that something exists and that it has definable characteristics.", "It reflects what we want to be true about an object.", "It reflects our degree of like or dislike of an of an object.", "None of the above."],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: Belief (විශ්වාසය) යනු සත්‍ය බවට හෝ පැවැත්මට සාක්ෂි නොමැතිව වුවද, යමක් සත්‍ය යැයි අප සලකන සංකල්පයකි."
+    },
+    {
+        question: "84. This is not a primary function of professional code of ethics of a professional body:",
+        options: ["Guide the members", "Discipline the members", "Validate the members", "Explain the responsibilities of the members"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: වෘත්තීය ආචාර ධර්ම සංග්‍රහයක ප්‍රධාන කාර්යයන් වන්නේ සාමාජිකයින්ට මඟ පෙන්වීම, විනය පවත්වාගෙන යාම සහ වගකීම් පැහැදිලි කිරීමයි. සාමාජිකයින්ගේ සුදුසුකම් පරීක්ෂා කිරීම හෝ නිපුණතාවය සහතික කිරීම (Validate the members) යනු සහතික කිරීමේ හෝ ප්‍රතීතන ආයතනවල කාර්යභාරය මිස, ආචාර ධර්ම සංග්‍රහයේ කාර්යයක් නොවේ."
+    },
+    {
+        question: "85. When the `summary(dataset)` command is executed, which of the following values is NOT included in the output?",
+        options: ["Mean", "1st Quartile", "Mode", "Median"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: `summary()` ශ්‍රිතය මගින් මධ්‍යන්‍යය (Mean), චතුර්ථක (Quartiles), අවම (Min) සහ උපරිම (Max) අගයන් ලබා දෙන නමුත්, Mode (මාතය) ලබා දෙන්නේ නැත."
+    },
+    {
+        question: "86. For a Normal Distribution, which R function is used to find the cumulative probability of a value less than or equal to `x`, i.e., P(X ≤ x)?",
+        options: ["dnorm()", "pnorm()", "qnorm()", "rnorm()"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: සම්භාවිතා ව්‍යාප්තියක සමුච්චිත සම්භාවිතාව (cumulative probability) සඳහා 'p' উপসর্গය (prefix) භාවිතා කරයි."
+    },
+    {
+        question: "87. According to the Central Limit Theorem, if the population mean is μ, what should be the mean of the sampling distribution of the sample means (μx̄)?",
+        options: ["Greater than μ", "Less than μ", "Equal to μ", "Equal to μ / n"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: මධ්‍ය සීමා ප්‍රමේයය (Central Limit Theorem) අනුව, නියැදි මධ්‍යන්‍යයන්ගේ ව්‍යාප්තියේ මධ්‍යන්‍යය (μx̄) ගහනයේ මධ්‍යන්‍යයට (μ) සමාන විය යුතුය. μx̄ = μ වේ."
+    },
+    {
+        question: "88. What does a 'residual' represent in linear regression?",
+        options: ["The difference between the observed y value and the predicted y value (ŷ).", "The slope of the regression line.", "The R-squared value.", "The error in the x variable."],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: අවශේෂ (residual) යනු නිරීක්ෂණය කරන ලද සැබෑ අගය (observed y value) සහ ආකෘතිය මඟින් අනාවැකි පළ කළ අගය (predicted y value) අතර ඇති වෙනසයි."
+    },
+    {
+        question: "89. What does the thick black line in the middle of a standard boxplot represent?",
+        options: ["The Mean", "The Mode", "The Median (or 2nd Quartile)", "The Interquartile Range (IQR)"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: පෙට්ටි සටහනක (boxplot) මැද ඇති තද රේඛාවෙන් නිරූපණය වන්නේ දත්ත කාණ්ඩයේ මධ්‍යස්ථයයි (Median / 50 වන ප්‍රතිශතකය)."
+    },
+    {
+        question: "90. What does the `scale()` function in R do?",
+        options: ["It changes the plot scale.", "It calculates the standard deviation.", "It standardizes the data (centers to mean 0 and scales to standard deviation 1).", "It finds the range of the data."],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: `scale()` ශ්‍රිතය මඟින් දත්ත ප්‍රමිතිකරණය (standardization) කරයි. එනම්, මධ්‍යන්‍යය 0 ට සහ සම්මත අපගමනය 1 ට සකස් කරයි."
+    },
+    {
+        question: "91. In R, how would you calculate the range (the difference between the maximum and minimum values) of a numeric vector `x`?",
+        options: ["range(x)", "max(x) - min(x)", "r(x)", "diff(x)"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: `range(x)` මගින් ලැබෙන්නේ අවම සහ උපරිම අගයන් දෙක වන අතර, පරාසය (range) සෙවීමට උපරිමයෙන් අවම අගය අඩු කළ යුතුය. `max(x) - min(x)`."
+    },
+    {
+        question: "92. What is the key difference between a list and a vector in R?",
+        options: ["Vectors can only store numbers, while lists can store characters.", "A list can contain elements of different data types, while a vector can only contain elements of the same data type.", "Vectors are one-dimensional, while lists are two-dimensional.", "There is no difference; they are interchangeable."],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: දෛශිකයක (vector) තිබිය හැක්කේ එකම දත්ත වර්ගයක් පමණක් වන අතර, ලැයිස්තුවක (list) විවිධ දත්ත වර්ගවල මූලද්‍රව්‍ය ගබඩා කළ හැක."
+    },
+    {
+        question: "93. If a dataset contains a very large outlier, how will it affect the mean and median?",
+        options: ["Both the mean and median will be significantly affected.", "The median will be significantly affected, but the mean will not.", "The mean will be significantly affected, but the median will not.", "Neither the mean nor the median will be affected."],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: මධ්‍යන්‍යය (mean) ගණනය කිරීමට සියලුම අගයන් එකතු කරන නිසා, බාහිර අගයකින් (outlier) එය විශාල ලෙස වෙනස් වේ. මධ්‍යස්ථය (median) යනු දත්ත මැද පිහිටි අගය නිසා, බාහිර අගයකින් එයට එතරම් බලපෑමක් සිදු නොවේ."
+    },
+    {
+        question: "94. In the output of `summary(lm(y ~ x))`, a small p-value (e.g., < 0.05) for the independent variable `x` suggests that:",
+        options: ["The model is a poor fit for the data.", "The independent variable `x` is a statistically significant predictor of `y`.", "The relationship between `x` and `y` is weak.", "The intercept of the model is zero."],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: කුඩා p-අගයක් (small p-value) පෙන්නුම් කරන්නේ, එම ස්වාධීන විචල්‍යය (independent variable) පරායත්ත විචල්‍යය (dependent variable) අනාවැකි කීමට සංඛ්‍යානමය වශයෙන් වැදගත් වන බවයි."
+    },
+    {
+        question: "95. What is a key assumption for a valid two-sample t-test?",
+        options: ["The two samples must have the same size.", "The data in each group should be approximately normally distributed.", "The two variables must be positively correlated.", "The median should be equal to the mean in both groups."],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: t-පරීක්ෂාවක (t-test) ප්‍රධාන උපකල්පනයක් වන්නේ, එක් එක් කණ්ඩායමේ දත්ත ආසන්න වශයෙන් සාමාන්‍ය ව්‍යාප්තියක් (normally distributed) අනුගමනය කළ යුතුය යන්නයි."
+    },
+    {
+        question: "96. What is the number of permutations of selecting 3 items from 8 (8P3)?",
+        options: ["choose(8, 3)", "factorial(8) / factorial(3)", "prod(8:6)", "factorial(8-3)"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: 8P3 යනු 8 * 7 * 6 වන අතර, R හි මෙය `prod(8:6)` ශ්‍රිතය මඟින් ගණනය කළ හැක."
+    },
+    {
+        question: "97. What does the `qpois(p, lambda)` function return?",
+        options: ["The probability P(X <= q).", "The value `x` such that P(X <= x) = p.", "A random number from the Poisson distribution.", "The probability density P(X = x)."],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: 'q' উপসর্গය සහිත ශ්‍රිතය (quantile function) මඟින් දී ඇති සමුච්චිත සම්භාවිතාවකට (`p`) අනුරූප වන විචල්‍යයේ අගය (`x`) ලබා දෙයි."
+    },
+    {
+        question: "98. What does Adjusted R-squared account for that regular R-squared does not?",
+        options: ["Outliers in the data.", "The number of predictors (independent variables) in the model.", "The correlation between predictors.", "The intercept of the model."],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: Adjusted R-squared (සකස් කළ R-වර්ගය) ආකෘතියේ ඇති ස්වාධීන විචල්‍යයන්ගේ (predictors) සංඛ්‍යාව සැලකිල්ලට ගනී. එමගින් අනවශ්‍ය විචල්‍යයන් එකතු කිරීම සඳහා දඬුවමක් (penalty) ලබා දෙයි."
+    },
+    {
+        question: "99. What is the main purpose of a paired t-test (`t.test(x, y, paired=TRUE)`)?",
+        options: ["To compare the means of two independent groups.", "To compare the means of the same group at two different times or under two different conditions.", "To compare the variances of two groups.", "To check if two variables are correlated."],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: යුගල t-පරීක්ෂාවක් (paired t-test) භාවිතා කරන්නේ එකම විෂයයන් (subjects) මත සිදු කළ මිනුම් දෙකක මධ්‍යන්‍යයන් අතර වෙනසක් තිබේදැයි පරීක්ෂා කිරීමටයි."
+    },
+    {
+        question: "100. If `rnorm(1)` generates one number from a standard normal distribution, what would you expect the `mean` of `rnorm(1000000)` to be very close to?",
+        options: ["1", "0.5", "0", "It's completely random and unpredictable."],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: සම්මත සාමාන්‍ය ව්‍යාප්තියක (standard normal distribution) මධ්‍යන්‍යය (mean) 0 වේ. විශාල සංඛ්‍යා නියමය (Law of Large Numbers) අනුව, විශාල නියැදියක මධ්‍යන්‍යය ගහනයේ මධ්‍යන්‍යයට ආසන්න විය යුතුය."
+    },
+    {
+        question: "101. Which function is used to create a Boxplot, which is useful for visualizing the distribution and identifying outliers in data?",
+        options: ["hist()", "plot()", "barplot()", "boxplot()"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: Boxplot මගින් දත්තවල චතුර්ථක (quartiles), මධ්‍යස්ථය (median) සහ බාහිර අගයන් (outliers) පැහැදිලිව පෙන්වයි."
+    },
+    {
+        question: "102. What is the most suitable chart type to represent a frequency distribution?",
+        options: ["Histogram", "Scatter Plot", "Pie Chart", "Line Chart"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: හිස්ටෝග්‍රෑමයක් මගින් දත්ත කාණ්ඩයක් විවිධ පන්ති ප්‍රාන්තර වලට බෙදා ඒවායේ සංඛ්‍යාතය (frequency) පෙන්වයි."
+    },
+    {
+        question: "103. Which pair of R functions is used to calculate the mean and standard deviation of a dataset?",
+        options: ["avg() and stdev()", "mean() and sd()", "average() and deviation()", "mean() and st.dev()"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: මධ්‍යන්‍යය සඳහා `mean()` ද, සම්මත අපගමනය සඳහා `sd()` ද R හි නිවැරදි ශ්‍රිත වේ."
+    },
+    {
+        question: "104. Which R function is used to calculate the Interquartile Range (IQR) of a dataset?",
+        options: ["iqr.range()", "interquartile()", "IQR()", "quantile.range()"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: IQR ගණනය කිරීමට `IQR()` ශ්‍රිතය කෙලින්ම භාවිතා කළ හැක."
+    },
+    {
+        question: "105. What type of plot is created by the command `plot(x, y)`?",
+        options: ["Bar plot", "Boxplot", "Scatter Plot", "Histogram"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: `plot()` ශ්‍රිතය විචල්‍ය දෙකක් ලබාදුන් විට විසිරුම් සටහනක් (Scatter Plot) නිර්මාණය කරයි."
+    },
+    {
+        question: "106. What is the R function used to find the cumulative probability of a value less than or equal to `x`, i.e., P(X ≤ x)?",
+        options: ["dnorm()", "pnorm()", "qnorm()", "rnorm()"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: සම්භාවිතා ව්‍යාප්තියක සමුච්චිත සම්භාවිතාව (cumulative probability) සඳහා 'p' উপসর্গය (prefix) භාවිතා කරයි."
+    },
+    {
+        question: "107. What is the main difference between `cbind()` and `rbind()`?",
+        options: ["`cbind` is for characters, `rbind` is for numbers.", "`cbind` combines vectors as columns, `rbind` combines them as rows.", "`cbind` is faster than `rbind`.", "There is no difference."],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: `cbind` (column bind) මඟින් දෛශික තීරු ලෙසත්, `rbind` (row bind) මඟින් ඒවා පේළි ලෙසත් එකට සම්බන්ධ කර න්‍යාසයක් හෝ දත්ත රාමුවක් සාදයි."
+    },
+    {
+        question: "108. In R, what is the correct command to select the column named 'Height' from a data frame named `my_data`?",
+        options: ["my_data['Height']", "my_data.Height", "my_data$Height", "my_data{'Height'}"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: Data Frame එකක තීරුවක් (column) තෝරාගැනීමට '$' සලකුණ භාවිත කරයි."
+    },
+    {
+        question: "109. Which is the correct function to import a CSV file named `info.csv` into the R environment?",
+        options: ["import.csv(\"info.csv\")", "read.csv(\"info.csv\")", "load.csv(\"info.csv\")", "open.csv(\"info.csv\")"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: R වල CSV ගොනු කියවීම සඳහා `read.csv()` ශ්‍රිතය භාවිතා කරයි."
+    },
+    {
+        question: "110. What type of data structure is created by the R command `x <- c(5, 10, 15, 20)`?",
+        options: ["A List", "A Vector", "A Matrix", "A Data Frame"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: `c()` ශ්‍රිතය භාවිතා කරන්නේ දෛශික (vectors) නිර්මාණය කිරීමටයි."
+    },
+    {
+        question: "111. Which argument is used to add a main title to a plot created using functions like `plot()` or `hist()`?",
+        options: ["title = \"My Title\"", "label = \"My Title\"", "header = \"My Title\"", "main = \"My Title\""],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: R ප්‍රස්තාරවල ප්‍රධාන මාතෘකාව (main title) එක් කිරීමට `main` යන තර්කය භාවිතා කරයි."
+    },
+    {
+        question: "112. How do you create a horizontal bar chart using the `barplot()` function?",
+        options: ["By using the argument `horizontal=TRUE`", "By using the argument `orientation=\"horizontal\"`", "By using the argument `horiz=TRUE`", "By switching the `x` and `y` arguments."],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: `barplot()` ශ්‍රිතය මගින් තිරස් (horizontal) තීරු ප්‍රස්තාරයක් නිර්මාණය කිරීමට `horiz=TRUE` ලෙස යෙදිය යුතුය."
+    },
+    {
+        question: "113. Which argument is used to change the color of the bars in a histogram or a bar chart?",
+        options: ["color", "fill", "col", "style"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: R ප්‍රස්තාරවල වර්ණය වෙනස් කිරීම සඳහා පොදුවේ භාවිතා කරන තර්කය `col` වේ (උදා: `col=\"blue\"`)."
+    },
+    {
+        question: "114. How would you calculate the number of combinations for choosing 2 items from a set of 5 (denoted as 5C2) in R?",
+        options: ["combinations(5, 2)", "nCr(5, 2)", "perm(5, 2)", "choose(5, 2)"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: සංයෝජන (Combinations) ගණනය කිරීම සඳහා R හි ඇති නිල ශ්‍රිතය `choose()` වේ."
+    },
+    {
+        question: "115. Which command generates 10 random numbers from a normal distribution with a mean of 50 and a standard deviation of 10?",
+        options: ["rnorm(10, mean=50, sd=10)", "qnorm(10, mean=50, sd=10)", "dnorm(10, mean=50, sd=10)", "pnorm(10, mean=50, sd=10)"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: ව්‍යාප්තියකින් අහඹු සංඛ්‍යා (random numbers) ජනනය කිරීමට 'r' উপসর্গය සහිත `rnorm()` ශ්‍රිතය භාවිතා කරයි."
+    },
+    {
+        question: "116. A calculated correlation coefficient of -0.9 between two variables indicates:",
+        options: ["A strong positive linear relationship.", "A weak negative linear relationship.", "Almost no linear relationship.", "A strong negative linear relationship."],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: සහසම්බන්ධතා සංගුණකය -1 ට ආසන්න වන විට ප්‍රබල සෘණ රේඛීය සම්බන්ධතාවක් පෙන්වයි."
+    },
+    {
+        question: "117. What is the primary R function for performing a one-sample or a two-sample t-test?",
+        options: ["t.test()", "test.t()", "hypothesis.t()", "mean.test()"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: මධ්‍යන්‍යයන් පිළිබඳ උපකල්පිත පරීක්ෂා (hypothesis tests) සඳහා භාවිතා කරන ප්‍රධාන ශ්‍රිතය `t.test()` වේ."
+    },
+    {
+        question: "118. Which function in R is used to get the dimensions (number of rows and columns) of a matrix or data frame?",
+        options: ["length()", "size()", "dim()", "dimensions()"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: `dim()` ශ්‍රිතය මඟින් දත්ත රාමුවක හෝ න්‍යාසයක පේළි ගණන සහ තීරු ගණන ලබා දෙයි. (උදා: `c(rows, columns)`)."
+    },
+    {
+        question: "119. What does the `t()` function in R do?",
+        options: ["To perform a t-test.", "To get the data type of an object.", "To transpose a matrix or data frame.", "To trim whitespace from a string."],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: `t()` ශ්‍රිතය න්‍යාසයක හෝ දත්ත රාමුවක පේළි සහ තීරු මාරු කරයි (transpose)."
+    "120. How do you select all rows in a data frame `df` where the column `age` is greater than 30?",
+        options: ["df[df$age > 30, ]", "df(df$age > 30)", "subset(df, age < 30)", "df[age > 30]"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: `df[df$age > 30, ]` ආකෘතිය භාවිතයෙන්, `age` තීරුවේ අගය 30 ට වැඩි වන සියලුම පේළි (සියලුම තීරු සමඟ) තෝරා ගත හැක."
+    },
+    {
+        question: "121. What does the `abline(h=0)` command do on a plot?",
+        options: ["Adds a horizontal line at y=0.", "Adds a vertical line at x=0.", "Adds a best-fit regression line.", "Highlights the point (0,0)."],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: `abline()` ශ්‍රිතයට `h` තර්කය ලබා දුන් විට, එය එම y අගය හරහා යන තිරස් (horizontal) රේඛාවක් අඳියි."
+    },
+    {
+        question: "122. Which function is used to add text inside a plot at specified coordinates?",
+        options: ["`label()`", "`add_text()`", "`text()`", "`write()`"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: `text()` ශ්‍රිතය මඟින් `x` සහ `y` ඛණ්ඩාංක ලබා දී, ප්‍රස්තාරයක් මත ඕනෑම තැනක අක්ෂර හෝ ලේබල එක් කිරීමට භාවිතා කරයි."
+    },
+    {
+        question: "123. In the `plot()` function, what does the argument `lty` control?",
+        options: ["Line type (solid, dashed, dotted, etc.).", "Line thickness.", "Label type.", "Legend type."],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: `lty` (line type) තර්කය, රේඛා ප්‍රස්තාරවලදී, රේඛාවේ ස්වභාවය (ඝන, කඩ ඉරි, තිත් ඉරි ආදී) වෙනස් කිරීමට භාවිතා කරයි."
+    },
+    {
+        question: "124. What does 'R-squared' represent in the output of `summary(lm(y ~ x))`?",
+        options: ["The correlation between x and y.", "The variance in the dependent variable (y) that is predictable from the independent variable (x).", "The p-value of the model.", "The slope of the regression line."],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: R-වර්ගය (R-squared) යනු ප්‍රතිශතයක් ලෙස, ස්වාධීන විචල්‍ය(යන්) මඟින් පරායත්ත විචල්‍යයේ කොපමණ විචලතාවක් පැහැදිලි කරන්නේද යන්න මනින මිම්මකි."
+    },
+    {
+        question: "125. In a standard normal distribution, what is the approximate probability P(-1 < Z < 1)?",
+        options: ["99%", "95%", "68%", "50%"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: ආනුභවික රීතියට (Empirical Rule) අනුව, සාමාන්‍ය ව්‍යාප්තියකදී දත්තවලින් ආසන්න වශයෙන් 68% ක් මධ්‍යන්‍යයේ සිට එක් සම්මත අපගමනයක් තුළ පිහිටයි."
+    },
+    {
+        question: "126. Which emotion makes people stereotype relatively more?",
+        options: ["Anger", "Frustration", "Sadness", "Nervousness"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: පර්යේෂණ මගින් පෙන්වා දී ඇත්තේ කෝපය (Anger) යනු, තොරතුරු ඉක්මනින් සැකසීමට සහ විනිශ්චයන් කිරීමට කෙටි මං ලෙස ඒකාකෘති (stereotypes) මත රඳා සිටීමට මිනිසුන් පෙළඹවිය හැකි හැඟීමක් බවයි."
+    },
+    {
+        question: "127. The mean of `rnorm(1000000, mean=10, sd=2)` would be very close to:",
+        options: ["0", "1", "2", "10"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: සම්මත සාමාන්‍ය ව්‍යාප්තියක (standard normal distribution) මධ්‍යන්‍යය 0 වන අතර, මෙහිදී මධ්‍යන්‍යය 10 වේ. විශාල නියැදියක මධ්‍යන්‍යය ගහනයේ සැබෑ මධ්‍යන්‍යයට (10) ඉතා ආසන්න විය යුතුය."
+    },
+    {
+        question: "128. What is the result of `as.logical(c(1, 0, 5, -2))`?",
+        options: ["TRUE FALSE TRUE TRUE", "1 0 5 -2", "An error", "TRUE FALSE FALSE FALSE"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: `as.logical()` ශ්‍රිතය මඟින් සංඛ්‍යාත්මක දෛශිකයක් තාර්කික (logical) දෛශිකයක් බවට පරිවර්තනය කරයි. මෙහිදී 0 `FALSE` බවටත්, 0 නොවන ඕනෑම සංඛ්‍යාවක් (`1`, `5`, `-2`) `TRUE` බවටත් පත් වේ."
+    },
+    {
+        question: "129. What does negative indexing do in R? For example, what is the result of `x[-2]` if `x <- c(10, 20, 30, 40)`?",
+        options: ["It returns the second element, 20.", "It returns an error.", "It returns all elements *except* the second element: 10, 30, 40.", "It returns the second element from the end, 30."],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: R වල සෘණ සුචිගත කිරීම (negative indexing) මඟින් එම ස්ථානයේ ඇති මූලද්‍රව්‍යය ඉවත් කර ඉතිරි සියල්ල ලබා දෙයි."
+    },
+    {
+        question: "130. If a dataset contains a very large outlier, how will it affect the standard deviation and the mean?",
+        options: ["Both the standard deviation and mean will be significantly affected.", "The mean will be significantly affected, but the standard deviation will not.", "Neither the standard deviation nor the mean will be affected.", "The standard deviation will be significantly affected, but the mean will not."],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: බාහිර අගයක් (outlier) මධ්‍යන්‍යය (mean) සහ සම්මත අපගමනය (standard deviation) යන දෙකටම විශාල ලෙස බලපායි, මන්ද ඒවායේ ගණනය කිරීම් සඳහා සියලුම දත්ත ලක්ෂ්‍යයන් භාවිතා කරයි."
+    },
+    {
+        question: "131. The function `round(4.678, digits = 1)` will return:",
+        options: ["4.6", "4.7", "5", "4.0"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: `round()` ශ්‍රිතය මඟින් සංඛ්‍යාවක්, `digits` තර්කය මඟින් ලබා දෙන දශමස්ථාන ගණනට වටයයි. 4.678 අගය එක දශමස්ථානයකට වට කිරීමේදී 4.7 ක් ලැබේ."
+    },
+    {
+        question: "132. What is the primary difference between `floor(x)` and `round(x)`?",
+        options: ["`floor(x)` always rounds down to the nearest integer, `round(x)` rounds to the nearest integer.", "`floor(x)` is for matrices, `round(x)` is for vectors.", "There is no difference.", "`floor(x)` always rounds up, `round(x)` rounds down."],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: `floor()` මඟින් සැමවිටම පහළ පූර්ණ සංඛ්‍යාව ලබා දෙන අතර, `round()` මඟින් ආසන්නම පූර්ණ සංඛ්‍යාවට වටයයි."
+    },
+    {
+        question: "133. In the `plot()` function, what does the argument `pch` control?",
+        options: ["The color of the points.", "The size of the points.", "The shape of the plotting points.", "The type of the plot (line, points, etc.)."],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: `pch` (plotting character) තර්කය මඟින් විසිරුම් සටහනක ලක්ෂ්‍යවල හැඩය (shape) වෙනස් කිරීමට භාවිතා කරයි."
+    },
+    {
+        question: "134. What is the main purpose of `set.seed(123)`?",
+        options: ["To speed up calculations.", "To set a starting point for random number generation, making the results reproducible.", "To change the color theme of plots.", "To plant a virtual tree in R."],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: `set.seed()` මඟින් අහඹු සංඛ්‍යා ජනනය (random number generation) කිරීමේ ක්‍රියාවලිය සඳහා ආරම්භක ලක්ෂ්‍යයක් ලබා දෙන අතර, එමඟින් ප්‍රතිඵල නැවත තහවුරු කළ හැකි (reproducible) වේ."
+    },
+    {
+        question: "135. What does the `predict()` function do when used with a linear model object (`lm`)?",
+        options: ["It predicts the R-squared value.", "It predicts the next most likely variable to add to the model.", "It predicts the dependent variable (y) for new values of the independent variable (x).", "It predicts the p-value of the model."],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: පුහුණු කළ රේඛීය ආකෘතියක් (`lm` object) භාවිතා කරමින්, ස්වාධීන විචල්‍යයේ නව දත්ත සඳහා පරායත්ත විචල්‍යයේ (y) අගයන් අනාවැකි පළ කිරීමට `predict()` ශ්‍රිතය භාවිතා කරයි."
+    },
+    {
+        question: "136. What is the purpose of the `conf.level` argument in `t.test()`?",
+        options: ["To set the p-value for significance.", "To set the confidence level for the confidence interval of the mean.", "To set the number of confidence intervals to compute.", "To configure the plot level."],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: `conf.level` තර්කය මඟින් මධ්‍යන්‍යයේ වෙනස සඳහා ගණනය කරන විශ්වාස පරතරයේ මට්ටම (confidence level) නියම කරයි."
+    },
+    {
+        question: "137. Which function is used to create a sequence of numbers? For example, to create `1, 3, 5, 7, 9`.",
+        options: ["`c(1,3,5,7,9)`", "`seq(from = 1, to = 9, by = 2)`", "`1:9, by=2`", "Both a and b"],
+        correct: 3,
+        explanation: "පැහැදිලි කිරීම: `c()` මඟින් සෘජුවම අගයන් ලබා දිය හැකි අතර, `seq()` ශ්‍රිතය මඟින් ආරම්භක අගයක්, අවසාන අගයක්, සහ වර්ධකයක් (`by`) ලබා දී අනුක්‍රමයක් නිර්මාණය කළ හැක. දෙකම වලංගු ක්‍රම වේ."
+    },
+    {
+        question: "138. Which of these functions is NOT part of the base R installation and requires a package?",
+        options: ["`mean()`", "`ggplot()`", "`plot()`", "`sd()`"],
+        correct: 1,
+        explanation: "පැහැදිලි කිරීම: `ggplot()` යනු `ggplot2` නම් පැකේජයේ කොටසකි. එය භාවිතා කිරීමට පෙර එය ස්ථාපනය කර සක්‍රීය කළ යුතුය. අනෙක් ශ්‍රිත Base R හි අඩංගු වේ."
+    },
+    {
+        question: "139. What is the result of `is.na(c(1, NA, 3))`?",
+        options: ["FALSE TRUE FALSE", "NA", "An error", "FALSE"],
+        correct: 0,
+        explanation: "පැහැදිලි කිරීම: `is.na()` ශ්‍රිතය එක් එක් මූලද්‍රව්‍යය `NA` ද නැද්ද යන්න පරීක්ෂා කර, `TRUE`/`FALSE` අගයන් සහිත තාර්කික දෛශිකයක් ලබා දෙයි."
+    },
+    {
+        question: "140. Which function removes rows with `NA` values from a data frame?",
+        options: ["na.remove()", "na.delete()", "na.omit()", "clean.na()"],
+        correct: 2,
+        explanation: "පැහැදිලි කිරීම: `na.omit()` ශ්‍රිතය මඟින් දත්ත රාමුවක ඕනෑම තීරුවක `NA` අගයක් ඇති සම්පූර්ණ පේළියම ඉවත් කර නව දත්ත රාමුවක් ලබා දෙයි."
+    }
+];
+
+// ------------- QUIZ LOGIC -------------
+
+const questionTextEl = document.getElementById('question-text');
+const optionsListEl = document.getElementById('options-list');
+const feedbackEl = document.getElementById('feedback');
+const explanationTextEl = document.getElementById('explanation-text');
+const nextBtn = document.getElementById('next-btn');
+const backBtn = document.getElementById('back-btn');
+const progressTextEl = document.getElementById('progress-text');
+const quizContainer = document.getElementById('quiz-container');
+const timerEl = document.getElementById('timer');
+const navPaletteEl = document.getElementById('navigation-palette');
+
+// You can change the quiz time here (in minutes)
+const quizTimeInMinutes = 60; // 1 hour for the exam
+let timeRemaining = quizTimeInMinutes * 60;
+let timerInterval;
+let quizFinished = false;
+
+let currentQuestionIndex = 0;
+let userAnswers = new Array(quizData.length).fill(null);
+
+function startTimer() {
+    timerInterval = setInterval(updateTimer, 1000);
+}
+
+function updateTimer() {
+    if (quizFinished) return;
+    timeRemaining--;
+    const minutes = Math.floor(timeRemaining / 60);
+    let seconds = timeRemaining % 60;
+
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+
+    timerEl.innerText = `${minutesStr}:${seconds}`;
+
+    if (timeRemaining <= 0) {
+        clearInterval(timerInterval);
+        showResults(true); // true indicates time is up
+    }
+}
+
+function renderNavigationPalette() {
+    navPaletteEl.innerHTML = '';
+    // The instructions state 40 MCQs, so we limit the visible palette to the first 40 questions of the currently active paper.
+    // Assuming each "paper" is 40 questions:
+    const questionsPerPaper = 40;
+    const paperNumber = Math.floor(currentQuestionIndex / questionsPerPaper) + 1;
+    const startQuestionIndex = (paperNumber - 1) * questionsPerPaper;
+    const endQuestionIndex = Math.min(paperNumber * questionsPerPaper, quizData.length);
+
+    for (let i = startQuestionIndex; i < endQuestionIndex; i++) {
+        const navItem = document.createElement('div');
+        // Display question number relative to the current paper (1 to 40)
+        navItem.innerText = i - startQuestionIndex + 1; 
+        navItem.classList.add('nav-item');
+        navItem.dataset.index = i;
+        navItem.addEventListener('click', (e) => {
+            jumpToQuestion(parseInt(e.target.dataset.index));
+        });
+        navPaletteEl.appendChild(navItem);
+    }
+    updateNavigationPalette();
+}
+
+
+function updateNavigationPalette() {
+    const questionsPerPaper = 40;
+    const paperNumber = Math.floor(currentQuestionIndex / questionsPerPaper) + 1;
+    const startQuestionIndex = (paperNumber - 1) * questionsPerPaper;
+    
+    const navItems = navPaletteEl.children;
+    for (let i = 0; i < navItems.length; i++) {
+        const item = navItems[i];
+        const globalIndex = parseInt(item.dataset.index);
+        item.classList.remove('current', 'answered-correct', 'answered-incorrect');
+
+        if (userAnswers[globalIndex] !== null) {
+            // NOTE: The 'answered-correct'/'answered-incorrect' feature is for practice/review and might be removed for a real exam simulation if needed.
+            // Keeping it here for full functionality as requested.
+            if (userAnswers[globalIndex] === quizData[globalIndex].correct) {
+                item.classList.add('answered-correct');
+            } else {
+                item.classList.add('answered-incorrect');
+            }
+        }
+        
+        if (globalIndex === currentQuestionIndex) {
+            item.classList.add('current');
+        }
+    }
+}
+
+function jumpToQuestion(index) {
+    // Ensure index stays within the current paper bounds if required, but for "Free" navigation, 
+    // it's fine to jump anywhere in the loaded quizData.
+    if (index >= 0 && index < quizData.length) {
+        currentQuestionIndex = index;
+        loadQuestion();
+    }
+}
+
+function loadQuestion() {
+    const currentQuestion = quizData[currentQuestionIndex];
+    
+    // Display question number relative to the whole quiz data for full 400 questions.
+    // If you want to simulate a single 40-question paper, you must adjust index here:
+    
+    const questionsPerPaper = 40;
+    const paperNumber = Math.floor(currentQuestionIndex / questionsPerPaper) + 1;
+    const questionNumberInPaper = (currentQuestionIndex % questionsPerPaper) + 1;
+
+    questionTextEl.innerText = `${currentQuestionIndex + 1}. ${currentQuestion.question}`; // Displaying global index for now
+    
+    optionsListEl.innerHTML = '';
+    feedbackEl.classList.remove('show');
+    
+    // Back/Next button logic considering only the current 40-question paper boundaries if needed,
+    // but sticking to loaded array limits for now.
+    backBtn.disabled = currentQuestionIndex === 0;
+    
+    if (currentQuestionIndex === quizData.length - 1) {
+        nextBtn.innerText = 'Show Results';
+    } else {
+        nextBtn.innerText = 'Next';
+    }
+
+    // Next button enables after an answer is selected.
+    nextBtn.disabled = userAnswers[currentQuestionIndex] === null && currentQuestionIndex < quizData.length -1;
+
+
+    currentQuestion.options.forEach((option, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = option;
+        li.classList.add('option');
+        li.dataset.index = index;
+        
+        // Handle option selection for un-answered questions
+        if (userAnswers[currentQuestionIndex] === null) {
+            li.addEventListener('click', selectAnswer);
+        } else {
+            // Highlight selected and correct answers for answered questions
+            li.classList.add('no-hover');
+            const correctAnswerIndex = currentQuestion.correct;
+            const storedAnswerIndex = userAnswers[currentQuestionIndex];
+
+            if (index === correctAnswerIndex) {
+                li.classList.add('correct');
+            }
+            if (index === storedAnswerIndex && storedAnswerIndex !== correctAnswerIndex) {
+                li.classList.add('incorrect');
+            }
+        }
+        optionsListEl.appendChild(li);
+    });
+
+    if (userAnswers[currentQuestionIndex] !== null) {
+        showFeedback();
+    }
+    
+    // Display progress based on the current 40-question paper format
+    progressTextEl.innerText = `Question ${questionNumberInPaper} of ${questionsPerPaper} (Paper ${paperNumber})`;
+
+    renderNavigationPalette(); // Update the palette to show current set of 40 questions
+
+}
+
+function selectAnswer(e) {
+    if (userAnswers[currentQuestionIndex] !== null) return; 
+
+    const selectedOption = e.target;
+    const selectedAnswerIndex = parseInt(selectedOption.dataset.index);
+    userAnswers[currentQuestionIndex] = selectedAnswerIndex;
+
+    const currentQuestion = quizData[currentQuestionIndex];
+    const correctAnswerIndex = currentQuestion.correct;
+
+    if (selectedAnswerIndex === correctAnswerIndex) {
+        selectedOption.classList.add('correct');
+    } else {
+        selectedOption.classList.add('incorrect');
+        optionsListEl.children[correctAnswerIndex].classList.add('correct');
+    }
+    
+    Array.from(optionsListEl.children).forEach(child => {
+        child.removeEventListener('click', selectAnswer);
+        child.classList.add('no-hover');
+    });
+
+    showFeedback();
+    nextBtn.disabled = false;
+    updateNavigationPalette();
+}
+
+function showFeedback() {
+    const currentQuestion = quizData[currentQuestionIndex];
+    explanationTextEl.innerHTML = `<b>නිවැරදි පිළිතුර: ${currentQuestion.options[currentQuestion.correct]}</b><br>${currentQuestion.explanation}`;
+    feedbackEl.classList.add('show');
+}
+
+function showResults(timeIsUp = false) {
+    quizFinished = true;
+    clearInterval(timerInterval);
+    
+    let finalScore = 0;
+    for (let i = 0; i < quizData.length; i++) {
+        if (userAnswers[i] === quizData[i].correct) {
+            finalScore++;
+        }
+    }
+
+    let resultMessage = timeIsUp ? `<h2>කාලය අවසන්!</h2>` : `<h2>විභාගය අවසන්!</h2>`;
+
+    quizContainer.innerHTML = `
+        <div id="header">
+            ${resultMessage}
+        </div>
+        <div id="question-area" style="text-align: center;">
+            <p style="font-size: 1.5em; margin: 20px;">ඔබේ අවසාන ලකුණු</p>
+            <p style="font-size: 3em; font-weight: bold; color: #4A90E2;">${finalScore} out of ${quizData.length}</p>
+            <button id="restart-btn" style="background-color: #4A90E2; color: white; border: none; padding: 15px 30px; border-radius: 5px; cursor: pointer; font-size: 1.2em; margin-top: 20px;">නැවත ආරම්භ කරන්න</button>
+        </div>
+    `;
+    document.getElementById('restart-btn').addEventListener('click', () => {
+        location.reload();
+    });
+}
+
+nextBtn.addEventListener('click', () => {
+    // Determine the boundary of the current 40-question paper
+    const questionsPerPaper = 40;
+    const nextQuestionIndex = currentQuestionIndex + 1;
+    const endOfCurrentPaper = Math.ceil((currentQuestionIndex + 1) / questionsPerPaper) * questionsPerPaper;
+
+    if (nextQuestionIndex < quizData.length) {
+        currentQuestionIndex = nextQuestionIndex;
+        loadQuestion();
+    } else {
+        showResults();
+    }
+});
+
+backBtn.addEventListener('click', () => {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+    }
+});
+
+// Initial load
+loadQuestion();
+startTimer();
+
+</script>
+</body>
+</html>
